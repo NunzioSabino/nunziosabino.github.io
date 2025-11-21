@@ -3,23 +3,104 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="color-scheme" content="light" />
+  <meta name="color-scheme" content="light">
   <title>Nunzio's Portfolio</title>
   <style>
     :root { color-scheme: light; }
-    html,body{height:100%;margin:0;background:#fff;color:#111;font-family:system-ui, -apple-system, "Segoe UI", Roboto, Arial;}
-    .wrap{max-width:900px;margin:40px auto;padding:20px;}
-    h1{margin:0 0 8px 0}
-    .note{color:#555}
-    a.button{display:inline-block;margin-top:12px;padding:8px 12px;background:#f6f8fb;border:1px solid #e1e4ea;border-radius:6px;color:#0366d6;text-decoration:none}
+    html, body { height: 100%; margin: 0; background: #ffffff; color: #111;
+                 font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
+    .wrap { max-width: 980px; margin: 28px auto; padding: 20px; }
+    header { display:flex; gap:12px; align-items:center; }
+    header img { width:56px; height:56px; border-radius:8px; object-fit:cover; }
+    h1 { margin:0; font-size:1.6rem; }
+    p.lead { color:#444; margin:6px 0 0 0; }
+    .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:14px; margin-top:20px; }
+    .card { background:#fff; border:1px solid #e6e6e6; padding:12px; border-radius:8px; box-shadow:0 6px 18px rgba(13,17,23,0.04); }
+    .card h3 { margin:0 0 8px 0; font-size:1rem; word-break:break-word; }
+    .meta { font-size:0.86rem; color:#666; margin-bottom:8px; }
+    .download { display:inline-block; padding:8px 10px; background:#f6f8fb; border-radius:6px; border:1px solid #e1e4ea; color:#0366d6; text-decoration:none; }
+    .empty { color:#666; text-align:center; padding:40px 0; }
+    footer { margin-top:26px; color:#666; font-size:0.9rem; }
+    code { background:#f1f1f1; padding:2px 6px; border-radius:4px; font-size:0.9em; }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>Nunzio's Portfolio</h1>
-    <p class="note">This GitHub Pages site is ready. Add your project files to a <code>projects/</code> folder or edit this index.html to show your work.</p>
-    <p><a class="button" href="projects/" target="_blank" rel="noopener">Browse projects</a></p>
-    <footer style="margin-top:28px;color:#666;font-size:0.9em">Hosted with GitHub Pages · white/light appearance</footer>
+    <header>
+      <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="logo">
+      <div>
+        <h1>Nunzio's Portfolio</h1>
+        <p class="lead">Downloadable project files (PDF, DOCX, XLSX, PPTX). Place files in the <code>projects/</code> folder in this repo.</p>
+      </div>
+    </header>
+
+    <main>
+      <div id="list" class="grid" aria-live="polite">
+        <div class="card empty">Loading projects…</div>
+      </div>
+
+      <footer>
+        Hosted with GitHub Pages · white/light display enforced.
+      </footer>
+    </main>
   </div>
+
+  <script>
+    // CONFIG: set these to your repo (already set for your repo)
+    const CONFIG = {
+      owner: "NunzioSabino",
+      repo: "nunziosabino.github.io",
+      branch: "main",
+      path: "projects"
+    };
+
+    const ALLOWED_EXT = ['pdf','doc','docx','xls','xlsx','ppt','pptx','odt','ods','odp'];
+
+    function formatBytes(bytes) {
+      if (bytes === 0) return '0 B';
+      if (!bytes) return '';
+      const units = ['B','KB','MB','GB','TB'];
+      let i = 0;
+      while (bytes >= 1024 && i < units.length - 1) { bytes /= 1024; i++; }
+      return `${Math.round(bytes*10)/10} ${units[i]}`;
+    }
+
+    function rawFileUrl(owner, repo, branch, path, name) {
+      return `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${encodeURIComponent(path)}/${encodeURIComponent(name)}`;
+    }
+
+    async function listProjects() {
+      const listEl = document.getElementById('list');
+      listEl.innerHTML = '<div class="card empty">Loading projects…</div>';
+      try {
+        const api = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${CONFIG.path}?ref=${CONFIG.branch}`;
+        const res = await fetch(api);
+        if (!res.ok) {
+          if (res.status === 404) throw new Error('No projects folder found. Create a "projects/" folder and add files.');
+          throw new Error('GitHub API error (' + res.status + ')');
+        }
+        const entries = await res.json();
+        const files = entries.filter(e => e.type === 'file' && ALLOWED_EXT.includes((e.name.split('.').pop()||'').toLowerCase()));
+        if (!files.length) {
+          listEl.innerHTML = '<div class="card empty">No project files found in <code>' + CONFIG.path + '/</code>. Upload files to that folder to make them appear here.</div>';
+          return;
+        }
+        listEl.innerHTML = files.map(f => {
+          const ext = (f.name.split('.').pop()||'').toLowerCase();
+          const size = formatBytes(f.size);
+          const url = rawFileUrl(CONFIG.owner, CONFIG.repo, CONFIG.branch, CONFIG.path, f.name);
+          return `<div class="card">
+                    <h3>${f.name}</h3>
+                    <div class="meta">${ext.toUpperCase()} · ${size}</div>
+                    <a class="download" href="${url}" target="_blank" rel="noopener noreferrer">Download</a>
+                  </div>`;
+        }).join('');
+      } catch (err) {
+        listEl.innerHTML = '<div class="card empty">Error loading files: ' + err.message + '</div>';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', listProjects);
+  </script>
 </body>
 </html>
