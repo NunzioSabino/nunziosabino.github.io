@@ -3,15 +3,15 @@
     {
       "key": "resume",
       "title": "Resume",
-      "description": "My current resume and CV.",
+      "description": "My current resume.",
       "items": [
         {
           "key": "resume-2025",
-          "title": "Nunzio Sabino — Resume",
+          "title": "Nunzio Sabino Resume",
           "filename": "Nunzio Sabino Resume.pdf",
-          "path": "projects/resume/Nunzio Sabino Resume.pdf",
+          "path": "projects/Resume/Nunzio Sabino Resume.pdf",
           "subtitle": "Latest resume (PDF)",
-          "description": "Master's level resume with coursework and activities."
+          "description": "Latest resume."
         }
       ]
     },
