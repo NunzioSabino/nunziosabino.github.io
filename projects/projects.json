@@ -16,44 +16,44 @@
       ]
     },
     {
-      "key": "dcf-models",
-      "title": "DCF models",
-      "description": "Discounted cash flow models I've built.",
+      "key": "ppt-presentations",
+      "title": "PPT Presentations",
+      "description": "Power Point presentation built.",
       "items": [
         {
-          "key": "uber",
-          "title": "UBER — DCF Model",
-          "filename": "uber-dcf.xlsx",
-          "path": "projects/dcf-models/uber-dcf.xlsx",
-          "subtitle": "Excel model (UBER)"
+          "key": "Heineken_Adidas_Ferrari",
+          "title": "Heineken_Adidas_Ferrari Company Comparison",
+          "filename": "Heineken_Adidas_Ferrari Company Comparison.pdf",
+          "path": "projects/PPT Presentations/Heineken_Adidas_Ferrari Company Comparison.pdf",
+          "subtitle": "PPT Presentation"
         },
         {
-          "key": "bbwi",
-          "title": "BBWI — DCF Model",
-          "filename": "bbwi-dcf.xlsx",
-          "path": "projects/dcf-models/bbwi-dcf.xlsx",
-          "subtitle": "Excel model (BBWI)"
+          "key": "Coming Soon",
+          "title": "Coming Soon",
+          "filename": "Coming Soon",
+          "path": "Coming Soon",
+          "subtitle": "Coming Soon"
         },
         {
-          "key": "airbnb",
-          "title": "AIRBNB — DCF Model",
-          "filename": "airbnb-dcf.xlsx",
-          "path": "projects/dcf-models/airbnb-dcf.xlsx",
-          "subtitle": "Excel model (AIRBNB)"
+          "key": "Coming Soon",
+          "title": "Coming Soon",
+          "filename": "Coming Soon",
+          "path": "Coming Soon",
+          "subtitle": "Coming Soon"
         }
       ]
     },
     {
-      "key": "presentations",
-      "title": "Power point presentations",
-      "description": "Presentation decks and slides.",
+      "key": "Coming Soon",
+      "title": "Coming Soon",
+      "description": "Coming Soon",
       "items": [
         {
-          "key": "intro-pitch",
-          "title": "Intro Pitch Deck",
-          "filename": "intro-pitch.pptx",
-          "path": "projects/presentations/intro-pitch.pptx",
-          "subtitle": "Company introduction presentation"
+          "key": "Coming Soon",
+          "title": "Coming Soon",
+          "filename": "Coming Soon",
+          "path": "Coming Soon",
+          "subtitle": "Coming Soon"
         }
       ]
     }
