@@ -3,104 +3,251 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="color-scheme" content="light">
+  <meta name="color-scheme" content="light" />
   <title>Nunzio's Portfolio</title>
   <style>
     :root { color-scheme: light; }
-    html, body { height: 100%; margin: 0; background: #ffffff; color: #111;
-                 font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
-    .wrap { max-width: 980px; margin: 28px auto; padding: 20px; }
-    header { display:flex; gap:12px; align-items:center; }
-    header img { width:56px; height:56px; border-radius:8px; object-fit:cover; }
-    h1 { margin:0; font-size:1.6rem; }
-    p.lead { color:#444; margin:6px 0 0 0; }
-    .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:14px; margin-top:20px; }
-    .card { background:#fff; border:1px solid #e6e6e6; padding:12px; border-radius:8px; box-shadow:0 6px 18px rgba(13,17,23,0.04); }
-    .card h3 { margin:0 0 8px 0; font-size:1rem; word-break:break-word; }
-    .meta { font-size:0.86rem; color:#666; margin-bottom:8px; }
-    .download { display:inline-block; padding:8px 10px; background:#f6f8fb; border-radius:6px; border:1px solid #e1e4ea; color:#0366d6; text-decoration:none; }
-    .empty { color:#666; text-align:center; padding:40px 0; }
-    footer { margin-top:26px; color:#666; font-size:0.9rem; }
-    code { background:#f1f1f1; padding:2px 6px; border-radius:4px; font-size:0.9em; }
+    html,body{height:100%;margin:0;background:#fff;color:#111;font-family:system-ui, -apple-system, "Segoe UI", Roboto, Arial;}
+    .wrap{max-width:980px;margin:28px auto;padding:20px;}
+    header{display:flex;gap:12px;align-items:center}
+    header img{width:56px;height:56px;border-radius:8px;object-fit:cover}
+    h1{margin:0;font-size:1.6rem}
+    p.lead{color:#444;margin:6px 0 0}
+    nav.index{margin-top:20px}
+    .index-list{list-style:none;padding:0;margin:0;counter-reset:item}
+    .index-list li{counter-increment:item;background:#fff;border:1px solid #e6e6e6;padding:12px;border-radius:8px;margin:8px 0;display:flex;align-items:center;gap:12px;box-shadow:0 6px 18px rgba(13,17,23,0.04)}
+    .index-list li::before{content:counter(item) ".";font-weight:700;color:#222;width:28px;text-align:right;margin-right:8px}
+    a.cat-link{flex:1;color:#0366d6;text-decoration:none;font-weight:600}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:16px}
+    .card{background:#fff;border:1px solid #e6e6e6;padding:12px;border-radius:8px;box-shadow:0 6px 18px rgba(13,17,23,0.04)}
+    .card h3{margin:0 0 8px 0;font-size:1rem}
+    .meta{font-size:0.86rem;color:#666;margin-bottom:8px}
+    .btn{display:inline-block;padding:8px 10px;background:#f6f8fb;border-radius:6px;border:1px solid #e1e4ea;color:#0366d6;text-decoration:none}
+    .preview-area{margin-top:18px;border:1px solid #e6e6e6;border-radius:8px;overflow:hidden;background:#fafafa}
+    .preview-iframe{width:100%;height:600px;border:0}
+    .breadcrumbs{font-size:0.9rem;color:#666;margin-top:12px}
+    .back{cursor:pointer;color:#0366d6;text-decoration:underline}
+    footer{margin-top:28px;color:#666;font-size:0.9rem}
+    .empty{color:#666;padding:26px;text-align:center}
+    /* mobile tweaks */
+    @media (max-width:520px){
+      .preview-iframe{height:420px}
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
+  <div class="wrap" id="app">
     <header>
       <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="logo">
       <div>
         <h1>Nunzio's Portfolio</h1>
-        <p class="lead">Downloadable project files (PDF, DOCX, XLSX, PPTX). Place files in the <code>projects/</code> folder in this repo.</p>
+        <p class="lead">Click a section below to browse my projects. Preview files in the browser and download them if you want.</p>
       </div>
     </header>
 
-    <main>
-      <div id="list" class="grid" aria-live="polite">
-        <div class="card empty">Loading projects…</div>
-      </div>
+    <nav id="main-nav" class="index" aria-label="Main index">
+      <ul id="indexList" class="index-list">
+        <!-- populated by JS -->
+      </ul>
+    </nav>
 
-      <footer>
-        Hosted with GitHub Pages · white/light display enforced.
-      </footer>
-    </main>
+    <section id="content" aria-live="polite">
+      <!-- category view / project preview will render here -->
+    </section>
+
+    <footer>Hosted with GitHub Pages · white/light display enforced</footer>
   </div>
 
   <script>
-    // CONFIG: set these to your repo (already set for your repo)
+    // CONFIG: set properly for your repo
     const CONFIG = {
       owner: "NunzioSabino",
-      repo: "nunziosabino.github.io",
+      repo: "nunziosabino.github.io", // change if using a different repo
       branch: "main",
-      path: "projects"
+      metadataPath: "projects/projects.json" // path to metadata file in repo
     };
 
-    const ALLOWED_EXT = ['pdf','doc','docx','xls','xlsx','ppt','pptx','odt','ods','odp'];
-
-    function formatBytes(bytes) {
-      if (bytes === 0) return '0 B';
-      if (!bytes) return '';
-      const units = ['B','KB','MB','GB','TB'];
-      let i = 0;
-      while (bytes >= 1024 && i < units.length - 1) { bytes /= 1024; i++; }
-      return `${Math.round(bytes*10)/10} ${units[i]}`;
+    // Utility to build raw file URL
+    function rawFileUrl(path) {
+      // path is relative inside the repo, e.g., projects/dcf-models/uber.pdf
+      return `https://raw.githubusercontent.com/${CONFIG.owner}/${CONFIG.repo}/${CONFIG.branch}/${encodeURI(path)}`;
     }
 
-    function rawFileUrl(owner, repo, branch, path, name) {
-      return `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${encodeURIComponent(path)}/${encodeURIComponent(name)}`;
+    // Load metadata JSON from the repo
+    async function loadMetadata() {
+      const url = `https://raw.githubusercontent.com/${CONFIG.owner}/${CONFIG.repo}/${CONFIG.branch}/${CONFIG.metadataPath}`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('Could not load projects metadata: ' + res.status);
+      return await res.json();
     }
 
-    async function listProjects() {
-      const listEl = document.getElementById('list');
-      listEl.innerHTML = '<div class="card empty">Loading projects…</div>';
-      try {
-        const api = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${CONFIG.path}?ref=${CONFIG.branch}`;
-        const res = await fetch(api);
-        if (!res.ok) {
-          if (res.status === 404) throw new Error('No projects folder found. Create a "projects/" folder and add files.');
-          throw new Error('GitHub API error (' + res.status + ')');
-        }
-        const entries = await res.json();
-        const files = entries.filter(e => e.type === 'file' && ALLOWED_EXT.includes((e.name.split('.').pop()||'').toLowerCase()));
-        if (!files.length) {
-          listEl.innerHTML = '<div class="card empty">No project files found in <code>' + CONFIG.path + '/</code>. Upload files to that folder to make them appear here.</div>';
-          return;
-        }
-        listEl.innerHTML = files.map(f => {
-          const ext = (f.name.split('.').pop()||'').toLowerCase();
-          const size = formatBytes(f.size);
-          const url = rawFileUrl(CONFIG.owner, CONFIG.repo, CONFIG.branch, CONFIG.path, f.name);
-          return `<div class="card">
-                    <h3>${f.name}</h3>
-                    <div class="meta">${ext.toUpperCase()} · ${size}</div>
-                    <a class="download" href="${url}" target="_blank" rel="noopener noreferrer">Download</a>
-                  </div>`;
-        }).join('');
-      } catch (err) {
-        listEl.innerHTML = '<div class="card empty">Error loading files: ' + err.message + '</div>';
+    // Routing helpers using location.hash
+    function navigateToCategory(key) {
+      location.hash = `cat=${encodeURIComponent(key)}`;
+    }
+    function navigateToProject(catKey, projectKey) {
+      location.hash = `proj=${encodeURIComponent(catKey)}/${encodeURIComponent(projectKey)}`;
+    }
+    function parseHash() {
+      const h = location.hash.slice(1);
+      if (!h) return {};
+      const parts = new URLSearchParams(h.replace(/\&/g,'&'));
+      // support both cat= and proj=
+      const cat = parts.get('cat');
+      const proj = parts.get('proj');
+      return { cat, proj };
+    }
+
+    // Render index (numbered categories)
+    function renderIndex(metadata) {
+      const list = document.getElementById('indexList');
+      list.innerHTML = '';
+      metadata.categories.forEach(cat => {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.className = 'cat-link';
+        a.href = 'javascript:void(0)';
+        a.textContent = cat.title;
+        a.addEventListener('click', () => navigateToCategory(cat.key));
+        const descr = document.createElement('div');
+        descr.className = 'meta';
+        descr.textContent = cat.description || '';
+        li.appendChild(a);
+        li.appendChild(descr);
+        list.appendChild(li);
+      });
+    }
+
+    // Render category view with projects list
+    function renderCategory(metadata, catKey) {
+      const cat = metadata.categories.find(c => c.key === catKey);
+      const content = document.getElementById('content');
+      if (!cat) {
+        content.innerHTML = `<div class="empty">Category not found.</div>`;
+        return;
       }
+      // breadcrumbs + back
+      const bread = document.createElement('div');
+      bread.className = 'breadcrumbs';
+      bread.innerHTML = `<span class="back" onclick="location.hash=''">← Back to index</span> · <strong>${cat.title}</strong>`;
+      // grid of projects
+      const grid = document.createElement('div');
+      grid.className = 'grid';
+      if (!cat.items || !cat.items.length) {
+        grid.innerHTML = `<div class="card empty">No items in this category yet.</div>`;
+      } else {
+        cat.items.forEach(item => {
+          const card = document.createElement('article');
+          card.className = 'card';
+          const title = document.createElement('h3');
+          title.textContent = item.title;
+          const meta = document.createElement('div');
+          meta.className = 'meta';
+          meta.textContent = item.subtitle || item.filename || '';
+          const btnPreview = document.createElement('a');
+          btnPreview.href = 'javascript:void(0)';
+          btnPreview.className = 'btn';
+          btnPreview.textContent = 'Preview';
+          btnPreview.addEventListener('click', () => navigateToProject(catKey, item.key));
+          const btnDownload = document.createElement('a');
+          btnDownload.href = rawFileUrl(item.path || (`projects/${catKey}/${item.filename}`));
+          btnDownload.className = 'btn';
+          btnDownload.style.marginLeft = '10px';
+          btnDownload.setAttribute('download','');
+          btnDownload.textContent = 'Download';
+          card.appendChild(title);
+          card.appendChild(meta);
+          card.appendChild(btnPreview);
+          card.appendChild(btnDownload);
+          grid.appendChild(card);
+        });
+      }
+      content.innerHTML = '';
+      content.appendChild(bread);
+      content.appendChild(grid);
     }
 
-    document.addEventListener('DOMContentLoaded', listProjects);
+    // Render a project preview
+    function renderProject(metadata, catKey, projKey) {
+      const cat = metadata.categories.find(c => c.key === catKey);
+      const content = document.getElementById('content');
+      if (!cat) {
+        content.innerHTML = `<div class="empty">Category not found.</div>`;
+        return;
+      }
+      const item = (cat.items || []).find(i => i.key === projKey);
+      if (!item) {
+        content.innerHTML = `<div class="empty">Project not found.</div>`;
+        return;
+      }
+      const bread = document.createElement('div');
+      bread.className = 'breadcrumbs';
+      bread.innerHTML = `<span class="back" onclick="location.hash='cat=${encodeURIComponent(catKey)}'">← Back to ${cat.title}</span> · <strong>${item.title}</strong>`;
+      const card = document.createElement('div');
+      card.className = 'card';
+      const title = document.createElement('h3');
+      title.textContent = item.title;
+      const meta = document.createElement('div');
+      meta.className = 'meta';
+      meta.textContent = item.subtitle || item.description || '';
+      card.appendChild(title);
+      card.appendChild(meta);
+
+      // file path (prefer explicit path in metadata, fallback to standard path)
+      const filePath = item.path || (`projects/${catKey}/${item.filename}`);
+      const fileUrl = rawFileUrl(filePath);
+
+      // preview area (iframe) - many browsers can render PDF inline
+      const previewArea = document.createElement('div');
+      previewArea.className = 'preview-area';
+      previewArea.innerHTML = `<iframe class="preview-iframe" src="${fileUrl}"></iframe>`;
+
+      // controls
+      const controls = document.createElement('div');
+      controls.style.marginTop = '12px';
+      const download = document.createElement('a');
+      download.className = 'btn';
+      download.href = fileUrl;
+      download.textContent = 'Download';
+      download.setAttribute('download','');
+      controls.appendChild(download);
+
+      content.innerHTML = '';
+      content.appendChild(bread);
+      content.appendChild(card);
+      content.appendChild(previewArea);
+      content.appendChild(controls);
+    }
+
+    // Main init
+    (async function init(){
+      let metadata;
+      try {
+        metadata = await loadMetadata();
+      } catch (err) {
+        document.getElementById('main-nav').style.display = 'none';
+        document.getElementById('content').innerHTML = `<div class="empty">Could not load projects metadata: ${err.message}. Create <code>${CONFIG.metadataPath}</code> in the repository.</div>`;
+        return;
+      }
+      renderIndex(metadata);
+
+      function router() {
+        const { cat, proj } = parseHash();
+        if (proj) {
+          // proj is "catKey/projKey"
+          const [catKey, projKey] = proj.split('/');
+          renderProject(metadata, decodeURIComponent(catKey), decodeURIComponent(projKey));
+        } else if (cat) {
+          renderCategory(metadata, decodeURIComponent(cat));
+        } else {
+          // show index; clear content area
+          document.getElementById('content').innerHTML = `<div class="empty">Select a section to view its projects.</div>`;
+        }
+      }
+
+      window.addEventListener('hashchange', router);
+      router(); // initial
+    })();
   </script>
 </body>
 </html>
