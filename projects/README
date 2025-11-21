@@ -1,8 +1,0 @@
-# Projects
-
-Drop your downloadable project files (PDF, DOCX, XLSX, PPTX, etc.) in this folder.
-
-Guidelines:
-- Keep individual files under 100 MB (use Git LFS or Releases for larger files).
-- Prefer short filenames with hyphens, e.g. `nunzio-sabino-resume.pdf`.
-- For each project you can add a small README or a subfolder with a README describing the project.
