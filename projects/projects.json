@@ -15,9 +15,41 @@
         }
       ]
     },
+
+    
+{
+      "key": "dcf-models",
+      "title": "DCF Models",
+      "description": "DCF Models built",
+      "items": [
+        {
+          "key": "dcf-modelsABNB",
+          "title": "ABNB DCF Model",
+          "filename": "AIRBNB DCF Model.xlsx",
+          "path": "projects/DCF Models/AIRBNB DCF Model.xlsx",
+          "subtitle": "AIRBNB Model"
+        }
+          {
+          "key": "dcf-modelsBBWI",
+          "title": "BBWI DCF Model",
+          "filename": "BBWI DCF Model.xlsx",
+          "path": "projects/DCF Models/BBWI DCF Model.xlsx",
+          "subtitle": "Bath&Body Works Model"
+        }
+         {
+          "key": "dcf-modelsLULU",
+          "title": "LULU DCF Model",
+          "filename": "LULU DCF Model.xlsx",
+          "path": "projects/DCF Models/LULU DCF Model.xlsx",
+          "subtitle": "Lululemon Model"
+        }
+      ]
+    }
+
+    
     {
       "key": "ppt-presentations",
-      "title": "PPT Presentations",
+      "title": "Presentations",
       "description": "Power Point presentation built.",
       "items": [
         {
@@ -43,19 +75,6 @@
         }
       ]
     },
-    {
-      "key": "Coming Soon",
-      "title": "Coming Soon",
-      "description": "Coming Soon",
-      "items": [
-        {
-          "key": "Coming Soon",
-          "title": "Coming Soon",
-          "filename": "Coming Soon",
-          "path": "Coming Soon",
-          "subtitle": "Coming Soon"
-        }
-      ]
-    }
+    
   ]
 }
