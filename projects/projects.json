@@ -29,14 +29,14 @@
           "path": "projects/DCF Models/AIRBNB DCF Model.xlsx",
           "subtitle": "AIRBNB Model"
         },
-          {
+        {
           "key": "dcf-modelsBBWI",
           "title": "BBWI DCF Model",
           "filename": "BBWI DCF Model.xlsx",
           "path": "projects/DCF Models/BBWI DCF Model.xlsx",
           "subtitle": "Bath&Body Works Model"
         },
-         {
+        {
           "key": "dcf-modelsLULU",
           "title": "LULU DCF Model",
           "filename": "LULU DCF Model.xlsx",
@@ -44,7 +44,7 @@
           "subtitle": "Lululemon Model"
         }
       ]
-    }
+    },
 
     
     {
@@ -74,7 +74,7 @@
           "subtitle": "Coming Soon"
         }
       ]
-    },
+    }
     
   ]
 }
